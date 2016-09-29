@@ -23,10 +23,11 @@ import requests
 import config  # Hidden parameters for image uploading to server
 
 
-# Initialize openCV camera
-cam = VideoCapture(0)
-cam.set(CAP_PROP_FRAME_WIDTH, 1920)
-cam.set(CAP_PROP_FRAME_HEIGHT, 1080)
+def camera_init():
+    camera = VideoCapture(0)
+    camera.set(CAP_PROP_FRAME_WIDTH, 1920)
+    camera.set(CAP_PROP_FRAME_HEIGHT, 1080)
+    return camera
 
 
 def shoot(camera):
@@ -56,7 +57,7 @@ def get_photo(camera, filename):
     Returns:
         nothing
     """
-    img = shoot(cam)
+    img = shoot(camera)
     imwrite("{}".format(filename), img)
 
 
@@ -83,12 +84,14 @@ def main():
     Main loop, polls for 30sec refresh timeout every 5 seconds and
     then uploads new image
     """
+    cam = camera_init()
+
     then = time()
     while True:
         now = time()
+        get_photo(cam, "kiltahuone.jpg")
         if now - then > 30:
             then = now
-            get_photo(cam, "kiltahuone.jpg")
             send_photo("kiltahuone.jpg")
         sleep(5)
 
