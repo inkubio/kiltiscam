@@ -59,6 +59,8 @@ def get_photo(camera, filename):
     """
     img = shoot(camera)
     imwrite("{}".format(filename), img)
+    # Uncomment in case of kiltislapses
+    # imwrite("/home/maikki/data1/kiltislapse/{}.jpg".format(time()), img)
 
 
 def send_photo(filename):
@@ -88,12 +90,16 @@ def main():
 
     then = time()
     while True:
-        now = time()
-        get_photo(cam, "kiltahuone.jpg")
-        if now - then > 30:
-            then = now
-            send_photo("kiltahuone.jpg")
-        sleep(5)
+        try:
+            now = time()
+            get_photo(cam, "kiltahuone.jpg")
+            if now - then > 30:
+                then = now
+                send_photo("kiltahuone.jpg")
+            sleep(5)
+        except Exception as e:
+            with open("err.txt", "a") as f:
+                f.write("An error occurred:\n{}\n\n".format(e))
 
 
 if __name__ == "__main__":
