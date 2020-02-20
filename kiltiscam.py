@@ -39,7 +39,7 @@ def read_gmw90_data():
         humidity measurements.
     """
     measurements = []
-    with open("config.gmw90file", "r") as f:
+    with open(config.gmw90file, "r") as f:
         for i in range(3):
             meas = f.readline()
             measurements.append(meas[:-1]) #removing trailing \n
@@ -118,7 +118,7 @@ def get_photo(camera, filename):
     putText(img, strftime("%d.%m.%Y"), (20, 40), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
     putText(img, strftime("%H.%M.%S"), (20, 80), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
     putText(img, temp, (20, 980), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
-    putText(img, 'CO2: ', (29, 1020), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
+    putText(img, 'CO2: ', (20, 1020), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
     putText(img, co2, (105, 1020), FONT_HERSHEY_DUPLEX, 1, co2color, 1, LINE_AA)
     putText(img, hum, (20, 1060), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
 
