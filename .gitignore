@@ -3,3 +3,4 @@ config.py
 kiltahuone.jpg
 nohup.out
 *.sh
+err.txt
