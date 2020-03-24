@@ -39,11 +39,14 @@ def read_gmw90_data():
         humidity measurements.
     """
     measurements = []
-    with open(config.gmw90file, "r") as f:
-        for i in range(3):
-            meas = f.readline()
-            measurements.append(meas[:-1]) #removing trailing \n
-    return measurements
+    try:
+        with open(config.gmw90file, "r") as f:
+            for i in range(3):
+                meas = f.readline()
+                measurements.append(meas[:-1]) #removing trailing \n
+        return measurements
+    except FileNotFoundError:
+        return []
 
 def create_co2_color(co2_measurement):
     """
@@ -108,19 +111,21 @@ def get_photo(camera, filename):
     img = shoot(camera)
     meas = read_gmw90_data()
 
-    temp = str("Temp: {}C".format(meas[0]))
-    co2 = str("{}ppm".format(meas[1]))
-    hum = str("Humidity: {}%".format(meas[2]))
+    if len(meas) == 3:
+        temp = str("Temp: {}C".format(meas[0]))
+        co2 = str("{}ppm".format(meas[1]))
+        hum = str("Humidity: {}%".format(meas[2]))
 
-    co2_int = int(meas[1])
-    co2color = create_co2_color(co2_int)
+        co2_int = int(meas[1])
+        co2color = create_co2_color(co2_int)
+
+        putText(img, temp, (20, 980), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
+        putText(img, 'CO2: ', (20, 1020), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
+        putText(img, co2, (105, 1020), FONT_HERSHEY_DUPLEX, 1, co2color, 1, LINE_AA)
+        putText(img, hum, (20, 1060), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
 
     putText(img, strftime("%d.%m.%Y"), (20, 40), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
     putText(img, strftime("%H.%M.%S"), (20, 80), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
-    putText(img, temp, (20, 980), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
-    putText(img, 'CO2: ', (20, 1020), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
-    putText(img, co2, (105, 1020), FONT_HERSHEY_DUPLEX, 1, co2color, 1, LINE_AA)
-    putText(img, hum, (20, 1060), FONT_HERSHEY_DUPLEX, 1, (200, 200, 200), 1, LINE_AA)
 
     imwrite("{}".format(filename), img)
     # Uncomment in case of kiltislapses
@@ -143,7 +148,6 @@ def send_photo(filename):
     payload = {"file": (filename, open(filename, "rb").read(), "image/jpeg")}
     r = requests.post(config.url, data=args, files=payload)
     print("HTTP response:", r.text)
-
 
 def main():
     """
